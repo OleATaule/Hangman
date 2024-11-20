@@ -40,15 +40,20 @@ async function ChooseDifficulty (){
     playGame();
 }
 
-const word = getRandomWord();
-let guessedWord = createGuessList(word.length);
+
+let word = getRandomWord();
 let wrongGuesses = [];
 let isGameOver = false;
+let guessedWord = createGuessList(word.length);
 
 async function playGame(){
+
+    word = getRandomWord();
+    guessedWord = createGuessList(word.length);
+    //wrongGuesses = [];
+
     do {
     
-
         updateUI();
     
         // Gjette en bokstav || ord.  (|| betyr eller).
@@ -70,19 +75,17 @@ async function playGame(){
             print(dictionary.youGuessedWrong, RED);
             wrongGuesses.push(guess);
     
-            if (wrongGuesses.length >= HANGMAN_UI.length - 1) {
+            if (wrongGuesses.length >= difficulty.length - 1) {
                 isGameOver = true;
                 updateUI();
-                print(dictionary.youLost, RED);
+                print(dictionary.youLost, RED); 
             }
     
         }
-    
-        // Har du lyst å spille igjen?
-    
     } while (isGameOver == false)
     
-    process.exit();
+    //process.exit();
+    playAnotherGame();
 }
 
 
@@ -123,7 +126,7 @@ function updateUI() {
 
     console.clear();
     print(guessedWord.join(""), GREEN);
-    print(HANGMAN_UI[wrongGuesses.length]);
+    print(difficulty[wrongGuesses.length]);
     if (wrongGuesses.length > 0) {
         print(dictionary.wrongGuesses + RED + wrongGuesses.join() + RESET);
     }
@@ -135,4 +138,15 @@ function getRandomWord() {
     let index = Math.floor(Math.random() * words.length);
     return words[index].toLowerCase();
 
+}
+
+async function playAnotherGame (){
+    let playAgain = await rl.question(dictionary.playAgain);
+
+    if(playAgain == "O"){
+        isGameOver = false;
+        playGame();
+    }else{
+        process.exit();
+    } 
 }
